@@ -6,11 +6,10 @@ from flight import *
 from planet import *
 from stage import *
 
-T1_test_vehicle = Stage(7.95e3, 3.55e3, 200e3, 320, 0.2)
+T1_test_vehicle = Stage(2e3, 1.55e3, 4e3, 200e3, 320, 0.2)
 
-T2_stage_2 = Stage(5.24e3, 3.24e3, 200e3, 370, 0.2)
-# For now manually add stage 2 wet mass; payload is just a Stage pointer
-T2_test_vehicle = Stage(8.9e3 + 5.24e3, 2.9e3 + 5.24e3, 200e3, 340, 0.2, payload = T2_stage_2)
+T2_stage_2 = Stage(1.75e3, 1.49e3, 2e3, 200e3, 370, 0.2)
+T2_test_vehicle = Stage(2.25e3, 5.99e3, 6e3, 200e3, 340, 0.2, payload = T2_stage_2)
 
 def main():
     # rocket = T1_test_vehicle
