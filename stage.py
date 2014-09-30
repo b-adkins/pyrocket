@@ -135,7 +135,7 @@ def main():
 
     # Rocket equation
     deltav = Isp * g * np.log(m_0/m_f) # log is ln by default in Python
-    deltav_g = 1/2 * g * t_b**2 # Gravity drag
+    deltav_g = g * t_b # Gravity drag
     deltav_d = deltav - deltav_g - v_b # Aerodynamic drag
     
     # Display results
