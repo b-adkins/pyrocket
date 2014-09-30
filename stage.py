@@ -6,7 +6,7 @@ g0 = 9.81
 
 ##
 # Class representing an arbitrary stage of a vehicle.
-class Stage:
+class Stage(object):
     ##
     #
     # Vehicle parameters

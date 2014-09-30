@@ -1,6 +1,6 @@
 import math
 
-class Planet:
+class Planet(object):
     # Sea level pressure [Pa]
     rho_0 = 0
     # Scale height [m]

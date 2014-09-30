@@ -7,7 +7,7 @@ from stage import *
 ##
 # Class to keep track of one flight of one vehicle.
 #
-class Flight:
+class Flight(object):
     ##
     # vehicle The first Stage of a vehicle.
     # Y0      Initial position and velocity [x, v] in [m, m/s]
