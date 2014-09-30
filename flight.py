@@ -54,16 +54,17 @@ class Flight:
         v = Y[1]
     
         # Current mass
-        m = self.vehicle.mass(t)
+        t_0 = self.t[0] # Starting time of this Flight
+        m = self.vehicle.mass(t - t_0) # Normalize flight time to start at t = 0
         
         # Calculate drag force
         D = self.drag(self.planet.atm_density(x), v, self.vehicle.C_d, self.vehicle.dragArea(m))
         
         # Check for burnout
-        if(m < self.vehicle.m_f):
-            dv = -g0
-        else:
-            dv = self.vehicle.T/m - g0 - D/m
+#        if(m < self.vehicle.m_f):
+#             dv = -g0
+#        else:
+        dv = self.vehicle.T/m - g0 - D/m
         dx = v
 
         # Log forces
@@ -95,8 +96,60 @@ class Flight:
         self.W.fill(np.NaN)
         
         sol = odeint(self.rocket1dode, self.Y0, self.t, full_output = 1)    
-        # Extracts Y vector from solution tuple
+        # Prepare return value
         self.Y = sol[0]
+
+        ## End-of-stage report
+
+        # Burnout values
+        t_b = self.t[-1] - self.t[0]
+        x_b = self.Y[-1, 0]
+        v_b = self.Y[-1, 1]
+
+        # Calculate delta v's
+        deltav = self.vehicle.Isp * g0 * np.log(self.vehicle.m_0/self.vehicle.m_f) # Engine delta v
+        deltav_g = g0 * t_b # Gravity drag
+        deltav_d = deltav - deltav_g - v_b # Aerodynamic drag
+
+        # Display results
+        print "----"
+        print "Stage report"
+        print "----"
+        print "Burn time:       ", t_b
+        print "Burnout altitude:", x_b
+        print "Burnout velocity:", v_b
+        print ""    
+        print "Stage deltaV:    ", deltav
+        print "Gravity drag:    ", deltav_g
+        print "Aerodynamic drag:", deltav_d        
+        
+        #
+        # Fly other stages recursively
+        #
+        if(isinstance(self.vehicle.payload, Stage)):
+            nextStage = self.vehicle.payload
+            tpp = np.arange(t_b, t_b + nextStage.time_burnout(), self.dt)
+            
+            nextStageFlight = Flight(nextStage, [x_b, v_b], t = tpp)
+            sol = nextStageFlight.solve()
+
+            Ypp = sol[:, 0:2]
+            Dpp = sol[:, 2]
+            Wpp = sol[:, 3]
+
+#            print "Sizes:"
+#            print "Y:", self.Y.shape, "    Ypp:", Ypp.shape
+#            print "D:", self.D.shape, "    Dpp:", Dpp.shape
+#            print "W:", self.W.shape, "    Wpp:", Wpp.shape
+           
+            self.Y = np.concatenate((self.Y, Ypp), 0)
+            self.D = np.concatenate((self.D, Dpp), 0)
+            self.W = np.concatenate((self.W, Wpp), 0)
+            self.t = np.concatenate((self.t, tpp), 0)
+           
+#           print "Y':", self.Y.shape
+#           print "D':", self.D.shape
+#           print "W':", self.W.shape
 
         return np.c_[self.Y, self.D, self.W]
 

@@ -8,8 +8,13 @@ from stage import *
 
 T1_test_vehicle = Stage(7.95e3, 3.55e3, 200e3, 320, 0.2)
 
+T2_stage_2 = Stage(5.24e3, 3.24e3, 200e3, 370, 0.2)
+# For now manually add stage 2 wet mass; payload is just a Stage pointer
+T2_test_vehicle = Stage(8.9e3 + 5.24e3, 2.9e3 + 5.24e3, 200e3, 340, 0.2, payload = T2_stage_2)
+
 def main():
-    rocket = T1_test_vehicle
+    # rocket = T1_test_vehicle
+    rocket = T2_test_vehicle
 
     # x, v
     Y0 = [0, 0]
@@ -18,30 +23,11 @@ def main():
     Y = flight.solve()
     
     # Aliases
+#    print "Y:", Y.shape, Y
     x = np.array(Y[:, 0])
     v = np.array(Y[:, 1])
     D = np.array(Y[:, 2]) 
     W = np.array(Y[:, 3])
-
-    # Burnout values
-    t_b = rocket.time_burnout()
-    x_b = x[-1]
-    v_b = v[-1]
-
-    # Rocket equation
-    deltav = rocket.Isp * g0 * np.log(rocket.m_0/rocket.m_f) # log is ln by default in Python
-    deltav_g = g0 * t_b # Gravity drag
-    deltav_d = deltav - deltav_g - v_b # Aerodynamic drag
-
-    # Display results
-    print "Mass flow rate:  ", rocket.mass_flow()
-    print "Burn time:       ", t_b
-    print "Burnout altitude:", x_b
-    print "Burnout velocity:", v_b
-    print "----"    
-    print "Stage deltaV:    ", deltav
-    print "Gravity drag:    ", deltav_g
-    print "Aerodynamic drag:", deltav_d
 
     t = flight.getTimes()
     pyplot.plot(t, x, t, v)

@@ -1,17 +1,18 @@
 import numpy as np
 
-# Kerbin gravity [m/s]
-# Used for Isp calculations
+# Standard Earth/Kerbin gravity [m/s]
+# Used for Isp calculations.
 g0 = 9.81 
 
 ##
-# Class representing
+# Class representing an arbitrary stage of a vehicle.
 class Stage:
     ##
     #
     # Vehicle parameters
-    # m_0  Wet mass [kg]
-    # m_f  Dry mass [kg]
+    # m_0          Wet mass [kg]
+    # m_f          Dry mass [kg]
+    # playload     Payload Stage or None (currently only a pointer - include stage mass in wet/dry mass).
     #
     # Thruster parameters
     # T    Thrust [N]
@@ -19,14 +20,16 @@ class Stage:
     #
     # Aerodynamic parameters
     # C_d   Coefficient of drag
-    def __init__(self, m_0, m_f, T, Isp, C_d):
-        self.m_0 = m_0 
+    def __init__(self, m_0, m_f, T, Isp, C_d, payload = None):
+        self.m_0 = m_0
         self.m_f = m_f 
 
         self.T = T
         self.Isp = Isp
 
         self.C_d = C_d
+
+        self.payload = payload
         
     ##
     # Calculates area for use in drag equations. Grossly oversimplified in KSP, based on mass.
@@ -60,7 +63,7 @@ class Stage:
     ##
     # Calculates vehicle mass from wet/dry mass and engine parameters.
     #
-    # t Time elapsed [s]
+    # t Time since start of burn [s]
     #
     # Returns mass [kg]
     def mass(self, t):
