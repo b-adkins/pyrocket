@@ -1,5 +1,6 @@
 import matplotlib.pyplot as pyplot
 import numpy as np
+import numpy.ma as ma
 
 from flight import *
 from planet import *
@@ -17,8 +18,10 @@ def main():
     Y = flight.solve()
     
     # Aliases
-    x = Y[:, 0]
-    v = Y[:, 1]
+    x = np.array(Y[:, 0])
+    v = np.array(Y[:, 1])
+    D = np.array(Y[:, 2]) 
+    W = np.array(Y[:, 3])
 
     # Burnout values
     t_b = rocket.time_burnout()
@@ -39,9 +42,25 @@ def main():
     print "Stage deltaV:    ", deltav
     print "Gravity drag:    ", deltav_g
     print "Aerodynamic drag:", deltav_d
-    
-    # pyplot.plot(t, x, t, v)
-    # pyplot.show()
 
+    t = flight.getTimes()
+    pyplot.plot(t, x, t, v)
+
+    # odeint can skip over many time steps, leaving blanks for intermediate values
+    # Hence, masked arrays to ignore the blank values.
+    D = ma.masked_invalid(D)
+    W = ma.masked_invalid(W)
+    mask = D.mask
+    t = ma.masked_array(t, mask=mask)
+    D = D.compressed()
+    W = W.compressed()
+    t = t.compressed()
+    
+    pyplot.figure()
+    pyplot.plot(t, D, t, W)
+    pyplot.show()
+
+    return Y
+    
 if __name__ == "__main__":
     main()
