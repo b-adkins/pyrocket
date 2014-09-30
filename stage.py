@@ -1,7 +1,4 @@
 import numpy as np
-from scipy.integrate import odeint
-
-import matplotlib.pyplot as pyplot
 
 # Kerbin gravity [m/s]
 # Used for Isp calculations

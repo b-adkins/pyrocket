@@ -1,3 +1,6 @@
+import matplotlib.pyplot as pyplot
+import numpy as np
+
 from flight import *
 from planet import *
 from stage import *
