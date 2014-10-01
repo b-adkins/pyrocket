@@ -126,6 +126,33 @@ class Stage(object):
     #
     def time_burnout(self):
         return (self.m_0 - self.m_f)/self.mass_flow()
+
+    ## Mass metrics
+    
+    ##
+    # Propellant mass fraction.
+    #
+    # How wet the wet mass is. (Proportion of propellant.)
+    def propellant_mf(self):
+        return self.m_p/self.m_0
+    
+    ##
+    # Payload ratio.
+    #
+    # Between payload and fuel + structure mass.
+    #
+    def payload_ratio(self):
+        return self.m_l/(self.m_p + self.m_s)
+        
+    ##
+    # Inert Mass Fraction aka structural coeffcient.
+    #
+    # How much of the vehicle mass (ignoring payload) is propellant.
+    #
+    # "If it doesn't look like a flying fuel tank, it's not a very efficient rocket."
+    # - John Carmack 
+    def inert_mass_frac(self):
+        return self.m_s/(self.m_p + self.m_s)
     
     ##
     # (Almost) Single-line representation.
