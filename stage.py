@@ -9,21 +9,27 @@ g0 = 9.81
 class Stage(object):
     ## Create a Stage object.
     #
-    # To make a multi-stage vehicle, start with the final stage. For each successive stage, include the previous stage as payload.
+    # To make a multi-stage vehicle, start with the final stage. For each successive stage, include the previous stage
+    # as payload.
     #
-    # Vehicle parameters
-    # m_s          Structural mass [kg]. Total mass of engines, fuel tanks (only the tank), and struts.
-    # m_l          Payload mass [kg]. Next stage wet mass or total mass of science instruments, capsules, space systems.
-    # m_p          Propellant mass [kg].
-    # playload     Payload Stage or None (currently only a pointer - include stage wet mass in payload mass).
+    # name         A short string naming your Stage, used for pretty printing.
+    #
+    # Mass budget
+    # m_s         Structural mass [kg]. Total mass of engines, fuel tanks (only the tank), and struts.
+    # m_l         Payload mass [kg]. Next stage wet mass or total mass of science instruments, capsules, space systems.
+    # m_p         Propellant mass [kg].
+    # playload    Payload Stage or None (currently only a pointer - next stage's wet mass should be included in
+    #               payload mass).
     #
     # Thruster parameters
-    # T    Thrust [N]
-    # Isp  Specific impulse [s]
+    # T           Thrust [N]
+    # Isp         Specific impulse [s]
     #
     # Aerodynamic parameters
-    # C_d   Coefficient of drag
-    def __init__(self, m_s, m_l, m_p, T, Isp, C_d, payload = None):
+    # C_d         Coefficient of drag
+    def __init__(self, name, m_s, m_l, m_p, T, Isp, C_d, payload = None):
+        self.name = name
+        
         self.m_s = m_s
         self.m_l = m_l
         self.m_p = m_p
@@ -75,6 +81,7 @@ class Stage(object):
         """ Set structural mass. """
         self._m_s = value
 
+    
         
     ##
     # Calculates area for use in drag equations. Grossly oversimplified in KSP, based on mass.
@@ -119,3 +126,29 @@ class Stage(object):
     #
     def time_burnout(self):
         return (self.m_0 - self.m_f)/self.mass_flow()
+    
+    ##
+    # (Almost) Single-line representation.
+    def __repr__(self):
+        ret = '<Rocket stage "{}">'.format((self.name))
+
+        # Cut possibility
+        # ret = "[Stage object: m_0 = {:0,.0f}, m_f = {:0,.0f}, ".format(self.m_0, self.m_f)
+        # ret += "T = {:0,.0f}, Isp = {:0,.0f}, ".format(self.T, self.Isp)
+        # ret += "C_d = {}, ".format(self.C_d)
+        # ret += "payload = {}]".format(self.payload)
+        
+        return ret
+    
+    ##
+    # Complete representation.
+    def __str__(self):
+        ret = self.name + "\n"
+        ret += "m_p = {:0,g}, m_s = {:0,g}, m_l = {:0,g}\n" \
+            .format(self.m_p, self.m_s, self.m_l)
+        ret += "m_0 = {:0,g}, m_f = {:0,g}\n".format(self.m_0, self.m_f)    
+        ret += "T = {:0,g}, Isp = {:0,g}\n".format(self.T, self.Isp)
+        ret += "C_d = {}\n".format(self.C_d)
+        ret += "payload = {}".format(repr(self.payload))
+    
+        return ret

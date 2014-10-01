@@ -112,8 +112,10 @@ class Flight(object):
         deltav_d = deltav - deltav_g - v_b # Aerodynamic drag
 
         # Display results
-        print "----"
-        print "Stage report"
+        print "===="
+        print "Stage {} report".format(self.vehicle.name)
+        print "===="
+        print self.vehicle
         print "----"
         print "Burn time:       ", t_b
         print "Burnout altitude:", x_b
@@ -121,7 +123,8 @@ class Flight(object):
         print ""    
         print "Stage deltaV:    ", deltav
         print "Gravity drag:    ", deltav_g
-        print "Aerodynamic drag:", deltav_d        
+        print "Aerodynamic drag:", deltav_d
+        print
         
         #
         # Fly other stages recursively
